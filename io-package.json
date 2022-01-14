@@ -1,0 +1,77 @@
+{
+    "common": {
+        "name": "daikin-cloud-controller",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Daikin Cloud Controller",
+        "titleLang": {
+            "en": "Daikin Cloud Controller",
+            "de": "Daikin Cloud-Controller",
+            "ru": "Облачный контроллер Daikin",
+            "pt": "Controlador de nuvem Daikin",
+            "nl": "Daikin Cloud-controller",
+            "fr": "Contrôleur Cloud Daikin",
+            "it": "Controller cloud Daikin",
+            "es": "Controlador de nube Daikin",
+            "pl": "Kontroler chmury Daikin",
+            "zh-cn": "大金云控制器"
+        },
+        "desc": {
+            "en": "daikincloud",
+            "de": "daikincloud",
+            "ru": "дайкиноблако",
+            "pt": "daikincloud",
+            "nl": "daikincloud",
+            "fr": "daikincloud",
+            "it": "daikincloud",
+            "es": "daikinnube",
+            "pl": "chmura Daikin",
+            "zh-cn": "大金云"
+        },
+        "authors": [
+            "Paweł Urban <pawel.urban@gmail.com>"
+        ],
+        "keywords": [
+            "daikin",
+            "cloud"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "daikin-cloud-controller.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/uKL/ioBroker.daikin-cloud-controller/main/admin/daikin-cloud-controller.png",
+        "readme": "https://github.com/uKL/ioBroker.daikin-cloud-controller/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "climate-control",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
+    },
+    "native": {
+        "token": "",
+        "pollingInterval": 30
+    },
+    "objects": [],
+    "instanceObjects": []
+}
