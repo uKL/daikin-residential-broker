@@ -7,6 +7,7 @@
 const utils = require("@iobroker/adapter-core");
 const DaikinCloud = require("daikin-cloud-private/index");
 let daikinCloud;
+var pollingTimer;
 
 class DaikinCloudController extends utils.Adapter {
     /**
@@ -19,7 +20,6 @@ class DaikinCloudController extends utils.Adapter {
         });
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
-        // this.on("objectChange", this.onObjectChange.bind(this));
         this.on("message", this.onMessage.bind(this));
         this.on("unload", this.onUnload.bind(this));
     }
@@ -35,9 +35,23 @@ class DaikinCloudController extends utils.Adapter {
             this.terminate(11);
         }
 
+        if (this.config.pollingInterval == null || this.config.pollingInterval == "") {
+            this.log.warn("Connectivity interval is not defined!");
+            this.terminate(11);
+        }
+
         this._initializeDaikinCloud();
-        const devices = await daikinCloud.getCloudDevices();
         this._createFolderObject("devices");
+
+        const t = this;
+        pollingTimer = this.setInterval(async function () {
+            await t._updateData();
+        }, this.config.pollingInterval * 1000);
+    }
+
+    async _updateData() {
+        this.log.info("Updating data from the cloud.");
+        const devices = await daikinCloud.getCloudDevices();
 
         if (devices && devices.length) {
             for (const device of devices) {
@@ -164,40 +178,16 @@ class DaikinCloudController extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
-
+            if (pollingTimer) {
+                this.clearInterval(pollingTimer);
+                pollingTimer = null;
+            }
             callback();
         } catch (e) {
             callback();
         }
     }
 
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-
-    /**
-     * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     */
     onStateChange(id, state) {
         if (state) {
             // The state was changed
