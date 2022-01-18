@@ -7,7 +7,7 @@
 const utils = require("@iobroker/adapter-core");
 const DaikinCloud = require("daikin-cloud-private/index");
 let daikinCloud;
-var pollingTimer;
+let pollingTimer;
 
 class DaikinCloudController extends utils.Adapter {
     /**
@@ -77,7 +77,7 @@ class DaikinCloudController extends utils.Adapter {
                     "indicator",
                     false
                 );
-                this._setState(this._createDeviceObjectPrefix(device) + ".lastUpdated", JSON.stringify(device.getLastUpdated()));
+                this._setState(this._createDeviceObjectPrefix(device) + ".lastUpdated", device.getDescription().lastUpdateReceived);
                 this._setState(this._createDeviceObjectPrefix(device) + ".isCloudConnectionUp", device.isCloudConnectionUp());
                 this._mapAllDataPointsToObjects(device.getData(), this._createDeviceObjectPrefix(device));
             }
