@@ -35,7 +35,7 @@ class DaikinCloudController extends utils.Adapter {
             this.terminate(11);
         }
 
-        if (this.config.pollingInterval == null || this.config.pollingInterval == "") {
+        if (this.config.pollingInterval == null || this.config.pollingInterval == 0) {
             this.log.warn("Connectivity interval is not defined!");
             this.terminate(11);
         }
@@ -45,8 +45,18 @@ class DaikinCloudController extends utils.Adapter {
 
         const t = this;
         pollingTimer = this.setInterval(async function () {
-            await t._updateData();
+            await t._updateDataHandlingErrors();
         }, this.config.pollingInterval * 1000);
+        await t._updateDataHandlingErrors();
+    }
+
+    async _updateDataHandlingErrors() {
+
+        try {
+            return this._updateData();
+        } catch (error) {
+            this.log.debug("Communication error : " + error);
+        }
     }
 
     async _updateData() {
@@ -105,7 +115,7 @@ class DaikinCloudController extends utils.Adapter {
                         "value",
                         writteable || false
                     );
-                    this._setState(elementPath, JSON.stringify(element));
+                    this._setState(elementPath, element);
                 } else if (sanitizedKey == "settable") {
                     // ignore
                     this.log.debug("Ignoring (" + elementPath + "): " + element);
@@ -118,7 +128,7 @@ class DaikinCloudController extends utils.Adapter {
                         "value",
                         false
                     );
-                    this._setState(elementPath, JSON.stringify(element));
+                    this._setState(elementPath, element);
                 }
             });
     }
