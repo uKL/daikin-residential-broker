@@ -42,21 +42,32 @@ class DaikinCloudController extends utils.Adapter {
 
         this._initializeDaikinCloud();
         this._createFolderObject("devices");
+        this._createStateObject(
+            "info.connection",
+            "connection",
+            "boolean",
+            "indicator",
+            false
+        );
+        this._setState("info.connection", false);
 
         const t = this;
-        pollingTimer = this.setInterval(async function () {
-            await t._updateDataHandlingErrors();
+        pollingTimer = this.setInterval(function () {
+            t._updateDataHandlingErrors();
         }, this.config.pollingInterval * 1000);
-        await t._updateDataHandlingErrors();
+        t._updateDataHandlingErrors();
     }
 
-    async _updateDataHandlingErrors() {
-
-        try {
-            return this._updateData();
-        } catch (error) {
-            this.log.debug("Communication error : " + error);
-        }
+    _updateDataHandlingErrors() {
+        this._updateData()
+            .then(() => {
+                this._setState("info.connection", true);
+                this.log.debug("Data updated.");
+            })
+            .catch(error => {
+                this._setState("info.connection", false);
+                this.log.warn("Communication error : " + error);
+            });
     }
 
     async _updateData() {
@@ -192,6 +203,7 @@ class DaikinCloudController extends utils.Adapter {
                 this.clearInterval(pollingTimer);
                 pollingTimer = null;
             }
+            this._setState("info.connection", false);
             callback();
         } catch (e) {
             callback();
